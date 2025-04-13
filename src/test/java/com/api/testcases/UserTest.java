@@ -1,5 +1,8 @@
 package com.api.testcases;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -14,6 +17,8 @@ public class UserTest {
 	Faker faker;
 	User userPayload;
 	
+	public static Logger logger;
+	
 	@BeforeClass
 	public void generateTestData() {
 		faker = new Faker();
@@ -25,16 +30,20 @@ public class UserTest {
 		userPayload.setEmail(faker.internet().safeEmailAddress());
 		userPayload.setPassword(faker.internet().password(5, 10));
 		userPayload.setPhone(faker.phoneNumber().cellPhone());
+		
+		logger = LogManager.getLogger("com.restassured.apiautomation");
 	}
 	
 	@Test(priority = 1)
 	public void testCreateUser() {
+		logger.info("Create user Test is starting");
 		Response res = UserEndpoints.createUser(userPayload);
 		System.out.println("********* Create User Data log ********");
 		res.then()
 		.log()
 		.all();
 		Assert.assertEquals(res.getStatusCode(), 200);
+		logger.info("Successfully completed Create User Test");
 	}
 	
 	@Test(priority = 2)
